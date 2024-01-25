@@ -333,6 +333,7 @@ describe('ConnectFourGame', () => {
         expect(game.state.status).toBe('OVER');
         game.leave(yellow);
         expect(game.state.status).toBe('OVER');
+        expect(game.state.yellow).toEqual(yellow.id);
       });
     });
   });

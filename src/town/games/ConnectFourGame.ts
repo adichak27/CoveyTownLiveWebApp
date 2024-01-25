@@ -282,10 +282,7 @@ export default class ConnectFourGame extends Game<ConnectFourGameState, ConnectF
   private _checkValidBoardPosition(move: GameMove<ConnectFourMove>): boolean {
     let row = move.move.row;
     let col = move.move.col;
-    // check if move is out of bounds
-    /*if (col < 0 || col >= 7 || row < 0 || row >= 6) {
-      return false;
-    } */
+    
     // check if move is on an empty space
     if (this._board[row][col] !== '') { 
       return false
