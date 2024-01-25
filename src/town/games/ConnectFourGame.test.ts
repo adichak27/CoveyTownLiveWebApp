@@ -483,11 +483,11 @@ describe('ConnectFourGame', () => {
           game,
           [
             ['_', '_', '_', '_', '_', '_', '_'],
-            ['_', '_', '_', '_', '_', '_', '_'],
-            ['_', '_', '_', '_', '_', '_', '_'],
-            ['_', 'R', '_', 'Y', '_', '_', '_'],
-            ['_', 'R', '_', 'Y', '_', '_', '_'],
-            ['_', 'R', '_', 'Y', '_', '_', '_'],
+            ['R', '_', 'R', 'Y', '_', '_', 'Y'],
+            ['Y', '_', 'R', 'Y', '_', '_', 'R'],
+            ['R', '_', 'R', 'R', '_', '_', 'Y'],
+            ['R', '_', 'Y', 'Y', '_', '_', 'Y'],
+            ['R', '_', 'R', 'Y', '_', '_', 'Y'],
           ],
           red.id,
           yellow.id,
@@ -495,6 +495,63 @@ describe('ConnectFourGame', () => {
         );
         expect(game.state.status).toBe('IN_PROGRESS');
         expect(game.state.winner).toBeUndefined();
+      });
+      it('should not end the game even when next move is winning horizontally or vertically', () => {
+        createMovesFromPattern(
+          game,
+          [
+            ['R', 'R', 'Y', 'Y', 'Y', '_', 'R'],
+            ['R', 'Y', 'R', 'R', 'R', 'Y', 'Y'],
+            ['R', 'Y', 'R', 'Y', 'R', 'Y', 'R'],
+            ['Y', 'R', 'Y', 'R', 'Y', 'Y', 'R'],
+            ['Y', 'R', 'Y', 'R', 'Y', 'R', 'Y'],
+            ['R', 'Y', 'R', 'Y', 'R', 'Y', 'R'],
+          ],
+          red.id,
+          yellow.id,
+          'Red',
+        );
+        expect(game.state.status).toBe('IN_PROGRESS');
+        expect(game.state.winner).toBeUndefined();
+        expect(game.state.moves.length).toBe(41);
+      });
+      it('should not end the game even when next move is winning top left to bottom right', () => {
+        createMovesFromPattern(
+          game,
+          [
+            ['R', '_', 'Y', 'R', 'Y', 'R', 'Y'],
+            ['R', 'R', 'Y', 'R', 'R', 'Y', 'Y'],
+            ['R', 'Y', 'R', 'Y', 'R', 'Y', 'R'],
+            ['Y', 'R', 'Y', 'Y', 'Y', 'R', 'R'],
+            ['Y', 'R', 'Y', 'R', 'Y', 'R', 'Y'],
+            ['R', 'Y', 'R', 'Y', 'R', 'Y', 'R'],
+          ],
+          red.id,
+          yellow.id,
+          'Red',
+        );
+        expect(game.state.status).toBe('IN_PROGRESS');
+        expect(game.state.winner).toBeUndefined();
+        expect(game.state.moves.length).toBe(41);
+      });
+      it('should not end the game even when next move is winning bottom left to top right', () => {
+        createMovesFromPattern(
+          game,
+          [
+            ['R', 'Y', 'Y', 'R', 'Y', 'R', '_'],
+            ['R', 'R', 'Y', 'R', 'R', 'Y', 'Y'],
+            ['R', 'Y', 'R', 'R', 'Y', 'Y', 'R'],
+            ['Y', 'R', 'Y', 'Y', 'Y', 'R', 'R'],
+            ['Y', 'Y', 'R', 'R', 'Y', 'R', 'Y'],
+            ['R', 'Y', 'R', 'Y', 'R', 'Y', 'R'],
+          ],
+          red.id,
+          yellow.id,
+          'Red',
+        );
+        expect(game.state.status).toBe('IN_PROGRESS');
+        expect(game.state.winner).toBeUndefined();
+        expect(game.state.moves.length).toBe(41);
       });
       test('Getting several in a row horizontally does not end the game', () => {
         createMovesFromPattern(
@@ -672,6 +729,7 @@ describe('ConnectFourGame', () => {
         );
         expect(game.state.status).toBe('OVER');
         expect(game.state.winner).toBeUndefined();
+        expect(game.state.moves.length).toBe(42);
       });
     });
   });
