@@ -74,18 +74,25 @@ export default class ConnectFourGame extends Game<ConnectFourGameState, ConnectF
     if (this.state.status !== 'WAITING_TO_START') {
       throw new Error(GAME_NOT_STARTABLE_MESSAGE);
     }
-    if (this.checkIfPlayerIsInGame(player)) {
+    if (this._checkIfPlayerIsInGame(player)) {
       throw new Error(PLAYER_NOT_IN_GAME_MESSAGE);
     }
     if (this.state.red === player.id) {
-      this.state.redReady = true;
+      this.state = {
+        ...this.state,
+        redReady: true
+      };
       this._checkIfPlayersAreReady();
-      
+
     } else if (this.state.yellow === player.id) {
-      this.state.yellowReady = true;
+      this.state = {
+        ...this.state,
+        yellowReady: true
+      };
       this._checkIfPlayersAreReady();
     }
 
+    // checks if either player was in the previous game
     if (this.priorGame?.state.red === this.state.red || this.priorGame?.state.yellow === this.state.yellow || 
       this.priorGame?.state.red === this.state.yellow || this.priorGame?.state.yellow === this.state.red) {
       this._switchFirstPlayer();
@@ -139,7 +146,7 @@ export default class ConnectFourGame extends Game<ConnectFourGameState, ConnectF
     if (this.state.red && this.state.yellow) {
       throw new Error(GAME_FULL_MESSAGE);
     }
-    this.assignPlayerToColor(player, this.priorGame);
+    this._assignPlayerToColor(player, this.priorGame);
     
     if (this.state.red && this.state.yellow) {
       this.state = {
@@ -149,7 +156,7 @@ export default class ConnectFourGame extends Game<ConnectFourGameState, ConnectF
     }
   }
 
-  private assignPlayerToColor(player: Player, priorGame: ConnectFourGame | undefined): void {
+  private _assignPlayerToColor(player: Player, priorGame: ConnectFourGame | undefined): void {
     if (priorGame) {
       if (priorGame.state.red === player.id && !this.state.red) {
         this._assignPlayerToRed(player);
@@ -168,7 +175,6 @@ export default class ConnectFourGame extends Game<ConnectFourGameState, ConnectF
       this._assignPlayerToYellow(player);
       return;
     }
-    throw new Error("Unable to assign player even though game isn't full. Something is seriously wrong.");
   }
 
   private _assignPlayerToYellow(player: Player): void {
@@ -184,7 +190,6 @@ export default class ConnectFourGame extends Game<ConnectFourGameState, ConnectF
       red: player.id,
     };
   }
-
   
   /**
    * Removes a player from the game.
@@ -200,7 +205,7 @@ export default class ConnectFourGame extends Game<ConnectFourGameState, ConnectF
    * @throws InvalidParametersError if the player is not in the game (PLAYER_NOT_IN_GAME_MESSAGE)
    */
   protected _leave(player: Player): void {
-    if (this.checkIfPlayerIsInGame(player)) {
+    if (this._checkIfPlayerIsInGame(player)) {
       throw new Error(PLAYER_NOT_IN_GAME_MESSAGE);
     }
     if (this.state.status === 'OVER') {
@@ -208,18 +213,18 @@ export default class ConnectFourGame extends Game<ConnectFourGameState, ConnectF
     }
 
     if (this.state.red === player.id) {
-      this.updateGameStatusOnLeave(player);
+      this._updateGameStatusOnLeave(player);
       this.state.red = undefined;
       this.state.redReady = false;
     }
     if (this.state.yellow === player.id) {
-      this.updateGameStatusOnLeave(player);
+      this._updateGameStatusOnLeave(player);
       this.state.yellow = undefined;
       this.state.yellowReady = false;
     }
   }
 
-  private updateGameStatusOnLeave(player: Player): void {
+  private _updateGameStatusOnLeave(player: Player): void {
     if (this.state.status === 'IN_PROGRESS') {
       this.state = {
         ...this.state,
@@ -252,7 +257,6 @@ export default class ConnectFourGame extends Game<ConnectFourGameState, ConnectF
    *
    */
   public applyMove(move: GameMove<ConnectFourMove>): void {
-    // still need to implement invalid board position. 
     this._validateMove(move);
     this.state = {
       ...this.state,
@@ -279,9 +283,9 @@ export default class ConnectFourGame extends Game<ConnectFourGameState, ConnectF
     let row = move.move.row;
     let col = move.move.col;
     // check if move is out of bounds
-    if (col < 0 || col >= 7 || row < 0 || row >= 6) {
+    /*if (col < 0 || col >= 7 || row < 0 || row >= 6) {
       return false;
-    }
+    } */
     // check if move is on an empty space
     if (this._board[row][col] !== '') { 
       return false
@@ -382,7 +386,7 @@ export default class ConnectFourGame extends Game<ConnectFourGameState, ConnectF
     }
   }
 
-  private checkIfPlayerIsInGame(player: Player): boolean {
+  private _checkIfPlayerIsInGame(player: Player): boolean {
     return this.state.red !== player.id && this.state.yellow !== player.id
   }
 }

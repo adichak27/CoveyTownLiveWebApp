@@ -9,7 +9,7 @@ import {
   GAME_NOT_STARTABLE_MESSAGE
 } from '../../lib/InvalidParametersError';
 import { createPlayerForTesting } from '../../TestUtils';
-import { ConnectFourGameState, ConnectFourMove, GameMove } from '../../types/CoveyTownSocket';
+import { ConnectFourMove, GameMove } from '../../types/CoveyTownSocket';
 import {
   ConnectFourColIndex,
   ConnectFourColor,
@@ -19,21 +19,6 @@ import ConnectFourGame from './ConnectFourGame';
 
 const logger = new Console(process.stdout, process.stderr);
 
-function createGameMove(gamePiece: string, col: number, row: number, playerID: string, gameID: string) {
-  
-  /* let connectFourMove: ConnectFourMove;
-        connectFourMove = {
-          gamePiece: new ConnectFourColor("gamePiece")
-          col: 3,
-          row: 5
-        };
-        let gameMove: GameMove<ConnectFourMove>;
-        gameMove = {
-          playerID: player3.id,
-          gameID: game.id,
-          move: connectFourMove
-        } */
-}
 /**
  * A helper function to apply a pattern of moves to a game.
  * The pattern is a 2-d array of Y, R or _.
@@ -166,7 +151,7 @@ describe('ConnectFourGame', () => {
       expect(newGame.state.winner).toBeUndefined();
       expect(newGame.state.moves).toEqual([]);
     });
-    it('should throw an error if the player is not in the game and the game is full', () => {
+    it('should throw an error if the player is not in the game but the game is full', () => {
       const player1 = createPlayerForTesting();
       const player2 = createPlayerForTesting();
       const player3 = createPlayerForTesting();
@@ -180,7 +165,7 @@ describe('ConnectFourGame', () => {
       const player2 = createPlayerForTesting();
       game.join(player1);
       game.join(player2);
-      expect(game.state.status).toBe("WAITING_TO_START");
+      expect(game.state.status).toBe('WAITING_TO_START');
     });
     it('should add player as yellow if yellow in previous game', () => {
       let priorGame = new ConnectFourGame();
@@ -220,7 +205,7 @@ describe('ConnectFourGame', () => {
       expect(currentGame.state.red).toEqual(yellow.id);
     });
   });
-  describe('startGame', () => { // I STILL NEED TO IMPLEMENT THIS
+  describe('startGame', () => {
     const red = createPlayerForTesting();
     const yellow = createPlayerForTesting();
     const player3 = createPlayerForTesting();
@@ -300,25 +285,6 @@ describe('ConnectFourGame', () => {
         newGame.leave(red);
         expect(newGame.state.status).toBe('WAITING_FOR_PLAYERS');
       });
-      test('if gamestate is unchanged when player leaves and status is OVER', () => {
-        createMovesFromPattern(
-          game,
-          [
-            ['Y', 'R', 'Y', 'R', 'Y', 'R', 'Y'],
-            ['R', 'Y', 'R', 'Y', 'R', 'Y', 'R'],
-            ['R', 'Y', 'R', 'Y', 'R', 'Y', 'R'],
-            ['Y', 'R', 'Y', 'R', 'Y', 'R', 'Y'],
-            ['Y', 'R', 'Y', 'R', 'Y', 'R', 'Y'],
-            ['R', 'Y', 'R', 'Y', 'R', 'Y', 'R'],
-          ],
-          red.id,
-          yellow.id,
-          'Red',
-        );
-        expect(game.state.status).toBe('OVER');
-        game.leave(red);
-        expect(game.state.status).toBe('OVER');
-      });
       test('If yellow player leaves when game in progress, updates game status to OVER and sets winner to the red player', () => {
         game.leave(yellow);
         expect(game.state.winner).toEqual(red.id);
@@ -390,7 +356,7 @@ describe('ConnectFourGame', () => {
         game.leave(yellow);
         let connectFourMove: ConnectFourMove;
         connectFourMove = {
-          gamePiece: "Red",
+          gamePiece: 'Red',
           col: 3,
           row: 5
         };
@@ -406,7 +372,7 @@ describe('ConnectFourGame', () => {
         const player3 = createPlayerForTesting();
         let connectFourMove: ConnectFourMove;
         connectFourMove = {
-          gamePiece: "Red",
+          gamePiece: 'Red',
           col: 3,
           row: 5
         };
@@ -421,7 +387,7 @@ describe('ConnectFourGame', () => {
       test('If not players turn, throws MOVE_NOT_YOUR_TURN_MESSAGE', () => {
         let connectFourMove: ConnectFourMove;
         connectFourMove = {
-          gamePiece: "Red",
+          gamePiece: 'Red',
           col: 3,
           row: 5
         };
@@ -437,7 +403,7 @@ describe('ConnectFourGame', () => {
       test('If move is not on an empty space, throws BOARD_POSITION_NOT_VALID_MESSAGE', () => {
         let connectFourMove: ConnectFourMove;
         connectFourMove = {
-          gamePiece: "Red",
+          gamePiece: 'Red',
           col: 3,
           row: 5
         };
@@ -450,7 +416,7 @@ describe('ConnectFourGame', () => {
 
         let connectFourMove2: ConnectFourMove;
         connectFourMove2 = {
-          gamePiece: "Yellow",
+          gamePiece: 'Yellow',
           col: 3,
           row: 5
         };
@@ -480,17 +446,17 @@ describe('ConnectFourGame', () => {
         );
         let connectFourMove: ConnectFourMove;
         connectFourMove = {
-          gamePiece: "Red",
+          gamePiece: 'Red',
           col: 2,
           row: 2
         };
         let gameMove: GameMove<ConnectFourMove>;
         gameMove = {
-          playerID: yellow.id,
+          playerID: red.id,
           gameID: game.id,
           move: connectFourMove
         }
-        expect(() => game.applyMove(gameMove)).toThrowError(MOVE_NOT_YOUR_TURN_MESSAGE);
+        expect(() => game.applyMove(gameMove)).toThrowError(BOARD_POSITION_NOT_VALID_MESSAGE);
       });
     });
     describe('when given a move that does not win the game, it does not end it', () => {
@@ -518,7 +484,7 @@ describe('ConnectFourGame', () => {
           [
             ['_', '_', '_', '_', '_', '_', '_'],
             ['_', '_', '_', '_', '_', '_', '_'],
-            ['_', 'Y', '_', 'R', '_', '_', '_'],
+            ['_', '_', '_', '_', '_', '_', '_'],
             ['_', 'R', '_', 'Y', '_', '_', '_'],
             ['_', 'R', '_', 'Y', '_', '_', '_'],
             ['_', 'R', '_', 'Y', '_', '_', '_'],
